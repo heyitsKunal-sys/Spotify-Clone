@@ -79,6 +79,7 @@ body {
 
 .right{
     margin: 16px 0;
+    position: relative;
 }
 
 .header{
@@ -93,6 +94,7 @@ body {
 
 .SpotifyPlaylist{
     padding: 16px;
+    
  }
 .SpotifyPlaylist .h1{
     padding: 16px;
@@ -160,6 +162,10 @@ body {
     
 
 }
+.signupbtn:hover {
+    font-size: 17px;
+    color: white
+}
 
 .loginbtn {
     background-color: white;
@@ -169,4 +175,35 @@ body {
     width: 79px;
     cursor: pointer;
     font-size: 16px;
+}
+.loginbtn:hover {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.playbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 30px;
+    filter: invert(1);
+    background: #e2d9d9;
+    border-radius: 10px;
+    width: 90%;
+    padding: 12px;
+    width: 70vw;
+    min-height: 40px;
+}
+
+.songbuttons{
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.songList{
+    height: 544px;
+    overflow: auto;
+    margin-bottom: 44px;
 }
