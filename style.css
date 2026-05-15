@@ -196,14 +196,15 @@ body {
     min-height: 40px;
 }
 
-.songbuttons{
+.songbuttons {
     display: flex;
     justify-content: center;
     gap: 16px;
 }
 
-.songList{
+.songList {
     height: 544px;
     overflow: auto;
     margin-bottom: 44px;
 }
+
