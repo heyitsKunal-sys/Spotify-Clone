@@ -200,12 +200,14 @@ body {
     padding: 12px;
     width: 70vw;
     min-height: 40px;
+    cursor: pointer;
 }
 
 .songbuttons {
     display: flex;
     justify-content: center;
     gap: 16px;
+    cursor: pointer;
 }
 
 .song-List {
@@ -221,6 +223,8 @@ body {
 .song-List li {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    
     gap: 10px;
     padding: 10px;
     list-style: none;
@@ -249,4 +253,17 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 
+}
+.song-List .icon {
+    width: 35px;
+    height: 35px;
+    color: #e2d9d9;
+    cursor: pointer;
+
+}
+
+.song-List .icon:hover {
+    color: #1fdf64;
+    transform: scale(1.2);
+    transition: all 0.3s ease-in-out;
 }
