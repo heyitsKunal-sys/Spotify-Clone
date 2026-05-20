@@ -202,6 +202,7 @@ body {
     min-height: 40px;
     cursor: pointer;
 }
+
 .seekbar {
     position: relative;
     width: 100%;
@@ -210,16 +211,19 @@ body {
     border-radius: 4px;
     margin-bottom: 10px;
 }
+
 .circle {
     position: absolute;
     top: 50%;
-    left: 0%; /* JavaScript updates this left property on the fly! */
+    left: 0%;
+    /* JavaScript updates this left property on the fly! */
     transform: translate(-50%, -50%);
     width: 12px;
     height: 12px;
     background-color: #ffffff;
     border-radius: 50%;
-    transition: left 0.1s linear; /* Makes movement look incredibly fluid */
+    transition: left 0.1s linear;
+    /* Makes movement look incredibly fluid */
 }
 
 .songbuttons {
@@ -227,6 +231,29 @@ body {
     justify-content: center;
     gap: 16px;
     cursor: pointer;
+}
+
+.timevol {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+    flex: 1;
+}
+
+.volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume img {
+    cursor: pointer;
+}
+
+.range input {
+    cursor: pointer;
+    width: 80px;
 }
 
 .song-List {
@@ -243,7 +270,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    
+
     gap: 10px;
     padding: 10px;
     list-style: none;
@@ -273,6 +300,7 @@ body {
     text-overflow: ellipsis;
 
 }
+
 .song-List .icon {
     width: 35px;
     height: 35px;
@@ -285,4 +313,61 @@ body {
     color: #1fdf64;
     transform: scale(1.2);
     transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .left {
+        position: fixed;
+        left: -100vw;
+        /* Conceal sidebar completely off-screen by default */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        background-color: #000000;
+        z-index: 100;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Target utility trigger rule class name toggleable via future JS menu icon tap */
+    .left.active {
+        left: 0;
+        /* Slide menu directly out in view when clicked */
+    }
+
+    .right {
+        width: 100vw;
+        /* Take up full responsive screen width layout profile */
+        margin: 0;
+        padding: 8px;
+    }
+
+    .cardContainer {
+        justify-content: center;
+        margin: 15px 0;
+        max-height: none;
+        /* Let content stack down naturally */
+    }
+
+    .card {
+        flex: 1 1 40%;
+        
+        max-width: 180px;
+    }
+
+    /* Rearrange playbar control positions vertically on small screens */
+    .abovebar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .timevol {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .songinfo {
+        text-align: center;
+        width: 100%;
+    }
 }
