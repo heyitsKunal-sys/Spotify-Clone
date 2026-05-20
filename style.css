@@ -202,6 +202,25 @@ body {
     min-height: 40px;
     cursor: pointer;
 }
+.seekbar {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    background-color: #535353;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.circle {
+    position: absolute;
+    top: 50%;
+    left: 0%; /* JavaScript updates this left property on the fly! */
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: left 0.1s linear; /* Makes movement look incredibly fluid */
+}
 
 .songbuttons {
     display: flex;
