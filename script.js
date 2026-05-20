@@ -1,162 +1,164 @@
-// setting up the shared memory (variable)
-// When building a music player, the browser needs to remember things globally across your whole script. For example, if you click "Pause" at the bottom bar, JavaScript needs to talk to the same audio player that started the song from the sidebar list.To do this, we create our global state at the very top of our script.js file.
+// 1. Core Audio Variables
+const audioPlayer = new Audio();
+let currentPlayingButton = null; // Tracks the playing icon button inside the left sidebar <li>
 
-// Create the virtual music player machine
-const audioPlayer = new Audio()
-// Create an empty box to remember which sidebar button is currently playing
-let currentPlayingButton = null;
+// Paths to your exact media icons based on your HTML layout
+const PLAY_ICON = "icons/play.png";   // Icon for the list items
+const PAUSE_ICON = "icons/pause.png"; // Icon for the list items
 
+const MASTER_PLAY_SVG = "images/play.svg";   // Play SVG for bottom bar
+const MASTER_PAUSE_SVG = "images/pause.svg"; // Pause SVG for bottom bar
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Left Library elements
     const playButtons = document.querySelectorAll('.song-List ul li .icon');
     const songListItems = document.querySelectorAll('.song-List ul li');
+
+    // Bottom Playbar elements matching your specific HTML layout
     const masterPlay = document.getElementById('play');
     const prevBtn = document.getElementById('previous');
     const nextBtn = document.getElementById('next');
+    
     const songInfoDisplay = document.querySelector('.songinfo');
     const songTimeDisplay = document.querySelector('.songtime');
-    const volumeSlider = document.querySelector('.range input');
-    
     const seekbar = document.querySelector('.seekbar');
     const seekCircle = document.querySelector('.circle');
+    const volumeSlider = document.querySelector('.range input');
 
-    // Utility: convert seconds to 00:00 format
+ 
     function formatTime(seconds) {
         if (isNaN(seconds)) return "00:00";
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-
     }
+
+
     function playSong(liElement, clickedButton) {
         const songSource = liElement.getAttribute('data-src');
+        
+        // Extract song title and artist from the list item text contents
         const title = liElement.querySelector('h3').textContent;
         const artist = liElement.querySelector('p').textContent;
+
         if (currentPlayingButton === clickedButton) {
             if (audioPlayer.paused) {
                 audioPlayer.play().then(() => {
-                    clickedButton.src = "icons/pause.png";
-                    masterPlay.src = "images/pause.svg";
+                    clickedButton.src = PAUSE_ICON;
+                    masterPlay.src = MASTER_PAUSE_SVG;
                 });
             } else {
                 audioPlayer.pause();
-                clickedButton.src = "icons/play.png";
-                masterPlay.src = "images/play.svg";
+                clickedButton.src = PLAY_ICON;
+                masterPlay.src = MASTER_PLAY_SVG;
             }
-
-        }
-        else {
-            // If another song was playing before, change its small icon back to play
+        } else {
+            // Revert old active sidebar button back to static play state
             if (currentPlayingButton) {
-                currentPlayingButton.src = "icons/play.png";
+                currentPlayingButton.src = PLAY_ICON;
             }
 
-            // Load the new track file into our music machine
+            // Load new song and inject data details down onto the display container
             audioPlayer.src = songSource;
-
-            // Update the text box at the bottom bar to show what is playing
             songInfoDisplay.innerHTML = `<strong>${title}</strong> - ${artist}`;
-
-            // Play the audio and sync both the small button and bottom bar button
+            
             audioPlayer.play().then(() => {
-                clickedButton.src = "icons/pause.png";
-                masterPlay.src = "images/pause.svg";
-
-                // Update our global tracker box to remember this active button!
+                clickedButton.src = PAUSE_ICON;
+                masterPlay.src = MASTER_PAUSE_SVG;
                 currentPlayingButton = clickedButton;
-            }).catch(err => console.error("Error starting playback:", err));
+            }).catch(err => console.error("Playback interrupted:", err));
         }
     }
+
+  
     playButtons.forEach(button => {
-
         button.style.cursor = "pointer";
-
-
-        button.addEventListener('click', function () {
-
+        button.addEventListener('click', function() {
             const parentLi = this.closest('li');
-
-
             playSong(parentLi, this);
         });
     });
+
+  
     masterPlay.style.cursor = "pointer";
     masterPlay.addEventListener('click', () => {
+        // Fallback: If no track has been picked yet, run the first library track
         if (!audioPlayer.src && songListItems.length > 0) {
             const firstLi = songListItems[0];
             const firstBtn = firstLi.querySelector('.icon');
             playSong(firstLi, firstBtn);
-            return; // Exit early since we just started a song
+            return;
         }
+
         if (audioPlayer.paused) {
             audioPlayer.play();
-            masterPlay.src = "images/pause.svg";
-            if (currentPlayingButton) currentPlayingButton.src = "icons/pause.png";
+            masterPlay.src = MASTER_PAUSE_SVG;
+            if (currentPlayingButton) currentPlayingButton.src = PAUSE_ICON;
         } else {
             audioPlayer.pause();
-            masterPlay.src = "images/play.svg";
-            if (currentPlayingButton) currentPlayingButton.src = "icons/play.png";
+            masterPlay.src = MASTER_PLAY_SVG;
+            if (currentPlayingButton) currentPlayingButton.src = PLAY_ICON;
         }
     });
+
+  
     function changeTrack(direction) {
         if (!currentPlayingButton) return;
+
         const currentLi = currentPlayingButton.closest('li');
         let targetLi;
 
         if (direction === 'next') {
-            targetLi = currentLi.nextElementSibiling;
-            if (!targetLi) targetLi = songListItems[0];
-
+            targetLi = currentLi.nextElementSibling;
+            if (!targetLi) targetLi = songListItems[0]; // Wrap back to beginning
         } else if (direction === 'prev') {
-            targetLi = currentLi.previousElementSibiling;
-            if (!targetLi) targetLi = songListItems[songListItems.length - 1];
-
+            targetLi = currentLi.previousElementSibling;
+            if (!targetLi) targetLi = songListItems[songListItems.length - 1]; // Wrap to absolute end
         }
+
         if (targetLi) {
             const targetBtn = targetLi.querySelector('.icon');
             playSong(targetLi, targetBtn);
         }
     }
+
     prevBtn.style.cursor = "pointer";
     nextBtn.style.cursor = "pointer";
-
     prevBtn.addEventListener('click', () => changeTrack('prev'));
     nextBtn.addEventListener('click', () => changeTrack('next'));
-    audioPlayer.addEventListener('ended', () => {
-        changeTrack('next');
-    });
+    audioPlayer.addEventListener('ended', () => changeTrack('next'));
+
+  
     audioPlayer.addEventListener('timeupdate', () => {
+        // Update the textual running time label (e.g., 01:23 / 03:45)
         songTimeDisplay.textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+        
+        // Linearly scale percentage marker calculation
         const progressPercentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
         if (!isNaN(progressPercentage)) {
             seekCircle.style.left = `${progressPercentage}%`;
         }
-    })
+    });
+
+    // Let user tap custom track coordinates anywhere on the timeline to hop to that time
     seekbar.style.cursor = "pointer";
     seekbar.addEventListener('click', (e) => {
-
+        // Obtain total visual pixel bounding width profile 
         const seekbarWidth = seekbar.getBoundingClientRect().width;
-
         const clickPositionOffset = e.offsetX;
-
+        
+        // Evaluate the calculated horizontal percentage placement 
         const targetPercentage = clickPositionOffset / seekbarWidth;
-
         audioPlayer.currentTime = targetPercentage * audioPlayer.duration;
     });
 
+   
     if (volumeSlider) {
-
+        // Force audio engine initialization defaults to match the input slider value
         audioPlayer.volume = volumeSlider.value / 100;
 
-
         volumeSlider.addEventListener('input', (e) => {
-            // Convert a scale of 0-100 down to a scale of 0.0-1.0
             audioPlayer.volume = e.target.value / 100;
         });
     }
-
-
-
-
-    console.log("The HTML is fully loaded and ready!");
 });
